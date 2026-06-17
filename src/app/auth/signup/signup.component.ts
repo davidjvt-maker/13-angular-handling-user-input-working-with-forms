@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormArray, AbstractControl } from '@angular/forms';
 
-function mustMatch(control: AbstractControl) {
-  const password = control.get('password')?.value;
-  const confirmPassword = control.get('confirmPassword')?.value;
-  if (password !== confirmPassword) {
-    return { mustMatch: true };
+function mustMatch(controlName1: string, controlName2: string) {
+
+  return (control: AbstractControl) => {
+    const password = control.get(controlName1)?.value;
+    const confirmPassword = control.get(controlName2)?.value;
+    if (password !== confirmPassword) {
+      return { mustMatch: true };
+    }
+    return null;
   }
-  return null;
 }
 
 @Component({
@@ -23,7 +26,7 @@ export class SignupComponent {
     passwords: new FormGroup({
       password: new FormControl('', { validators: [Validators.required, Validators.minLength(6), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')] }),
       confirmPassword: new FormControl('', { validators: [Validators.required, Validators.minLength(6), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')] }),
-    }, { validators: [mustMatch] }),
+    }, { validators: [mustMatch('password', 'confirmPassword')] }),
     firstName: new FormControl('', { validators: [Validators.required] }),
     lastName: new FormControl('', { validators: [Validators.required] }),
     address: new FormGroup({
